@@ -1,0 +1,20 @@
+{
+  "name": "modr",
+  "description": "A lightweight modular javascript plugin wrapper",
+  "main": "js/modr.js",
+  "license": "MIT",
+  "keywords": [
+    "javascript",
+    "boilerplate",
+    "modular"
+  ],
+  "moduleType": [],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

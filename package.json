@@ -1,0 +1,43 @@
+{
+  "name": "modr",
+  "version": "0.0.1",
+  "description": "A lightweight modular javascript plugin wrapper",
+  "keywords": [
+    "javascript",
+    "boilerplate",
+    "modular",
+    "plugin",
+    "wrapper"
+  ],
+  "main": "src/modr.js",
+  "directories": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "name": "Jan Rembold",
+    "email": "janrembold@gmail.com"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:janrembold/modr.git"
+  },
+  "bugs": {
+    "url": "http://github.com/janrembold/modr/issues",
+    "email": "janrembold@gmail.com"
+  },
+  "dependencies": {},
+  "engines": {},
+  "devDependencies": {
+    "del": "^2.2.0",
+    "gulp": "^3.9.0",
+    "gulp-jshint": "^2.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-size": "^2.0.0",
+    "gulp-uglify": "^1.5.1",
+    "jshint": "^2.8.0",
+    "jshint-stylish": "^2.1.0"
+  }
+}
