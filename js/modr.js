@@ -23,11 +23,6 @@
                         throw 'Modr Wrapper "'+pluginName+'" for Plugin "'+plugin.wrapper+'" not available';
                     }
 
-                    // sort modules by priority
-                    plugin.modules.sort(function (a, b) {
-                        return a.config.prio - b.config.prio;
-                    });
-
                     // init wrapper with plugin modules
                     wrappers[plugin.wrapper].init( pluginName, plugin.modules );
 
