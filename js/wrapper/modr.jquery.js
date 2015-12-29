@@ -13,9 +13,6 @@
      * Prepare jQuery Plugin Skeleton
      */
     function Plugin(element, modules, options) {
-        // save default options
-        this.defaults = options;
-
         // modr modules
         this.modules = {};
 
@@ -23,11 +20,11 @@
         this.$element = $(element);
 
         // init plugins
-        this.loadModules( modules, options );
+        this._loadModules( modules, options );
     }
 
     var methods = {
-        loadModules: function( modules, options ) {
+        _loadModules: function( modules, options ) {
             var defaults = {};
 
             // merge module default options and hooks
@@ -50,6 +47,16 @@
             }
         },
 
+        /**
+         * Wrap events around a given function and listen to preventDefaults
+         *
+         * @param eventName - will be prefixed with "before." and "after."
+         * @param fn - the function to call between the events
+         * @param elem - optional, the jQuery element to bind the event to, defaults to this.$element
+         * @param thisArg - optional, the thisArg for fn.apply, defaults to root module
+         * @param params - optional, array of parameters. Will be set to both events and the given function
+         * @returns {*|methods} the given scope
+         */
         wrapEvents: function( eventName, fn, elem, thisArg, params ) {
             var scope = thisArg || this;
             var element = elem || this.$element;
