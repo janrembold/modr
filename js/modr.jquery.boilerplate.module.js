@@ -1,10 +1,10 @@
 (function($) {
     'use strict';
 
+    // the modr config object
     var config = {
         plugin: 'pluginName',
         module: 'moduleName',
-        prio: 100,
         defaults: {
             defaultOption: 'someValue'
         }
@@ -12,21 +12,22 @@
 
     // the modules constructor
     function Plugin( rootContext ) {
+        var self = this;
+
+        // save root context of jQuery boilerplate skeleton for later usage
         this.root = rootContext;
+
+        // wait for global init event
+        this.root.wrapEvents('init.moduleName.pluginName', function() {
+            self.init();
+        });
     }
 
     // the modules methods
     var methods = {
 
         init: function() {
-            var self = this;
-            var root = this.root;
-
-            root.wrapEvents('init.moduleName.pluginName', function() {
-
-                console.log('init module');
-
-            });
+            console.log('init module');
         },
 
         destroy: function() {
@@ -38,7 +39,7 @@
     // extend plugins prototype
     $.extend( Plugin.prototype, methods );
 
-    // store module for modr
+    // register module in modr
     modr.registerPlugin( config, Plugin );
 
 })(jQuery);
