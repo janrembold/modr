@@ -1,5 +1,5 @@
-# modr
-A lightweight modular javascript plugin wrapper.
+# modr framework
+A lightweight modular javascript plugin wrapper framework.
  
 `modr` was build to divide the complex structure of javascript plugins into smaller, specialized modular objects.
 
@@ -150,3 +150,8 @@ $someElement.trigger( 'after.demo.moduleName.pluginName', ['param1', 'param2'] )
 })(jQuery);
 ```
 
+# TODOs
+
+- add params to modr.init() to load only specific module with explicit wrapper
+- add global destroy function to jquery skeleton
+- add some license information
