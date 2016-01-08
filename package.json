@@ -1,6 +1,6 @@
 {
   "name": "modr",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A lightweight modular javascript plugin wrapper",
   "keywords": [
     "javascript",
@@ -33,6 +33,7 @@
   "devDependencies": {
     "del": "^2.2.0",
     "gulp": "^3.9.0",
+    "gulp-header": "^1.7.1",
     "gulp-jshint": "^2.0.0",
     "gulp-rename": "^1.2.2",
     "gulp-size": "^2.0.0",

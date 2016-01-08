@@ -14,9 +14,10 @@
 
         // TODO Add some config object to init plugin(s) with custom wrappers
         // or init only single plugin, e.g. config = [{ plugin: wrapper }]
+        // Prevent double init!!!!!! init flag?
         function init() {
             for(var pluginName in plugins) {
-                if(plugins.hasOwnProperty(pluginName)) {
+                if(plugins.hasOwnProperty(pluginName) && !plugin.initialized) {
 
                     var plugin = plugins[pluginName];
                     if( typeof(plugin.wrapper) === 'undefined' || typeof(wrappers[plugin.wrapper]) === 'undefined' ) {
@@ -25,6 +26,7 @@
 
                     // init wrapper with plugin modules
                     wrappers[plugin.wrapper].init( pluginName, plugin.modules );
+                    plugin.initialized = true;
 
                 }
             }
@@ -33,7 +35,8 @@
         function registerPlugin( config, mod ) {
             if( typeof(plugins[config.plugin]) === 'undefined' ) {
                 plugins[config.plugin] = {
-                    modules: []
+                    modules: [],
+                    initialized: false
                 };
             }
 

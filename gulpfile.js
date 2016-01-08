@@ -1,10 +1,12 @@
 var gulp = require('gulp');
 var jshint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
+var header = require('gulp-header');
 var uglify = require('gulp-uglify');
 var size = require('gulp-size');
 var rename = require('gulp-rename');
 var del = require('del');
+var pkg = require('./package.json');
 
 
 gulp.task('clean', function () {
@@ -24,6 +26,9 @@ gulp.task('jshint', function() {
 gulp.task('uglify', ['clean', 'jshint'], function () {
 
     return gulp.src('js/**/*.js')
+        .pipe( header('/*! <%= pkg.name %> | @version v<%= pkg.version %> | @license <%= pkg.license %> */\n', {
+            pkg : pkg
+        }) )
         .pipe( uglify({
             preserveComments: 'license',
             compress: {

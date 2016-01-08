@@ -75,6 +75,15 @@
             element.trigger( 'after.'+eventName, params );
 
             return scope;
+        },
+
+        destroy: function() {
+
+            // TODO add global destroy function
+            //for(var i = 0, len = this.modules.length; i < len; ++i) {
+            //    this.modules[i].destroy();
+            //}
+
         }
     };
 
