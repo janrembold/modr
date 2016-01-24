@@ -12,24 +12,50 @@
         var plugins = {};
         var wrappers = {};
 
-        // TODO Add some config object to init plugin(s) with custom wrappers
-        // or init only single plugin, e.g. config = [{ plugin: wrapper }]
-        // Prevent double init!!!!!! init flag?
-        function init() {
-            for(var pluginName in plugins) {
-                if(plugins.hasOwnProperty(pluginName) && !plugin.initialized) {
+        function init( wrapper, plugin ) {
 
-                    var plugin = plugins[pluginName];
-                    if( typeof(plugin.wrapper) === 'undefined' || typeof(wrappers[plugin.wrapper]) === 'undefined' ) {
-                        throw 'Modr Wrapper "'+pluginName+'" for Plugin "'+plugin.wrapper+'" not available';
+            var config = {};
+
+            if( typeof(wrapper) === 'object' ) {
+                config = wrapper;
+            } else if( typeof(plugin) === 'string' && typeof(wrapper) === 'string' ) {
+                config[wrapper] = [ plugin ];
+            }
+
+            _loadPlugins( config );
+
+        }
+
+        function _loadPlugins( config ) {
+
+            for( var wrapper in config ) {
+                if( config.hasOwnProperty(wrapper) ) {
+
+                    if( typeof(wrappers[wrapper]) === 'undefined' ) {
+                        throw 'Modr Wrapper "'+wrapper+'" not available';
                     }
 
-                    // init wrapper with plugin modules
-                    wrappers[plugin.wrapper].init( pluginName, plugin.modules );
-                    plugin.initialized = true;
+                    for( var i=0, len=config[wrapper].length; i<len; ++i ) {
+
+                        var pluginName = config[wrapper][i];
+                        if( typeof(plugins[pluginName]) === 'undefined' ) {
+                            throw 'Modr Plugin "'+pluginName+'" not available';
+                        }
+
+                        // init plugin only once
+                        if( plugins[pluginName].initialized ) {
+                            continue;
+                        }
+
+                        // init wrapper with plugin modules
+                        wrappers[wrapper].init( pluginName, plugins[pluginName].modules );
+                        plugins[pluginName].initialized = true;
+
+                    }
 
                 }
             }
+
         }
 
         function registerPlugin( config, mod ) {
