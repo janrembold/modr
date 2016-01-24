@@ -12,15 +12,17 @@
 
     // the modules constructor
     function Plugin( rootContext ) {
+
         var self = this;
 
         // save root context of jQuery boilerplate skeleton for later usage
-        this.root = rootContext;
+        self.root = rootContext;
 
         // wait for global init event
-        this.root.wrapEvents('init.moduleName.pluginName', function() {
+        self.root.wrapEvents('init.moduleName.pluginName', function() {
             self.init();
         });
+
     }
 
     // the modules methods
