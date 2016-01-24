@@ -157,3 +157,7 @@ $someElement.trigger( 'after.demo.moduleName.pluginName', ['param1', 'param2'] )
 
 })(jQuery);
 ```
+
+# Available modr plugins
+
+- https://github.com/janrembold/modr.jquery.chop - Accordion and Tabbed Navigation with responsive hybrid mode and URL parameter support
