@@ -24,15 +24,23 @@ Include it always BEFORE any other `modr` modules.
 <!-- modr modules come here -->
 ```
 
-You can even reload or conditionally load other modules on runtime as long as `modr` wasn't initialized.
-Init `modr` with the following line of code after all modules have been loaded:
+You can even reload or conditionally load other modules on runtime as long as the plugin wasn't initialized.
+Init `modr` plugin(s) with the following function call:
 
 ```js
-modr.init();
+// init a single plugin with a specific wrapper
+modr.init( 'wrapperName', 'pluginName' );
+
+// or load a bunch of wrappers and plugins at once
+modr.init({
+  'wrapperName': [
+    'pluginName'
+  ]
+});
 ```
 
 
-# modr wrapper - jQuery
+# modr wrapper - `jQuery`
 
 The jQuery wrapper was inspired by https://github.com/jquery-boilerplate/jquery-boilerplate
 In this case the jQuery boilerplate is only the root skeleton for the plugin itself that:
