@@ -157,8 +157,3 @@ $someElement.trigger( 'after.demo.moduleName.pluginName', ['param1', 'param2'] )
 
 })(jQuery);
 ```
-
-# TODOs
-
-- add params to modr.init() to load only specific module with explicit wrapper
-- add global destroy function to jquery skeleton
