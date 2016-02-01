@@ -13,6 +13,7 @@
      * Prepare jQuery Plugin Skeleton
      */
     function Plugin(element, modules, options) {
+
         // modr modules
         this.modules = {};
 
@@ -25,26 +26,38 @@
 
     var methods = {
         _loadModules: function( modules, options ) {
-            var defaults = {};
-
-            // merge module default options and hooks
-            for(var i= 0, len=modules.length; i<len; ++i) {
-
-                // extend default options
-                if( typeof(modules[i].config.defaults) !== 'undefined' ) {
-                    defaults[modules[i].config.module] = {};
-                    $.extend(true, defaults[modules[i].config.module], modules[i].config.defaults);
-                }
-
-            }
 
             // extend all default module options
-            this.options = $.extend(true, {}, defaults, options);
+            this.options = {};
 
             // instantiate all modules
-            for(i= 0, len=modules.length; i<len; ++i) {
-                this.modules[modules[i].config.module] = new modules[i].module( this );
+            for( var pluginName in modules ) {
+                for ( var moduleName in modules[pluginName] ) {
+
+                    var mod = modules[pluginName][moduleName];
+                    var defaults = mod.config.defaults || {};
+
+                    if( options[pluginName] && options[pluginName][moduleName] ) {
+                        $.extend(true, defaults, options[pluginName][moduleName]);
+                    }
+
+                    if( typeof(this.modules[pluginName]) === 'undefined' ) {
+                        this.modules[pluginName] = {};
+                        this.options[pluginName] = {};
+                    }
+
+                    if( typeof(this.options[pluginName][moduleName]) === 'undefined' ) {
+                        this.options[pluginName][moduleName] = {};
+                    }
+
+                    $.extend(true, this.options[pluginName][moduleName], defaults);
+
+                    this.modules[pluginName][moduleName] = new mod.module( this, defaults );
+                }
             }
+
+            $.extend(true, this.options, options);
+
         },
 
         /**
@@ -58,6 +71,7 @@
          * @returns {*|methods} the given scope
          */
         wrapEvents: function( eventName, fn, elem, thisArg, params ) {
+
             var scope = thisArg || this;
             var element = elem || this.$element;
             var event = $.Event( 'before.'+eventName );

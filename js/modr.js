@@ -9,82 +9,76 @@
      * Modr Singleton
      */
     var modr = function Modr() {
-        var plugins = {};
+        var modules = {};
         var wrappers = {};
 
-        function init( wrapper, plugin ) {
+        function init( plugin, wrapper, config ) {
 
-            var config = {};
+            _isUndefined( wrappers[wrapper], 'Modr wrapper "' + wrapper + '" not available');
 
-            if( typeof(wrapper) === 'object' ) {
-                config = wrapper;
-            } else if( typeof(plugin) === 'string' && typeof(wrapper) === 'string' ) {
-                config[wrapper] = [ plugin ];
-            }
+            var mods = {};
+            for( var pluginName in config ) {
+                if (config.hasOwnProperty(pluginName)) {
 
-            _loadPlugins( config );
+                    for( var i=0, len=config[pluginName].length; i<len; ++i ) {
 
-        }
+                        var moduleName = config[pluginName][i];
+                        _isUndefined( modules[pluginName][moduleName], 'Modr module "' + moduleName + '" (Plugin: "' + pluginName + '") not loaded');
 
-        function _loadPlugins( config ) {
-
-            for( var wrapper in config ) {
-                if( config.hasOwnProperty(wrapper) ) {
-
-                    if( typeof(wrappers[wrapper]) === 'undefined' ) {
-                        throw 'Modr Wrapper "'+wrapper+'" not available';
-                    }
-
-                    for( var i=0, len=config[wrapper].length; i<len; ++i ) {
-
-                        var pluginName = config[wrapper][i];
-                        if( typeof(plugins[pluginName]) === 'undefined' ) {
-                            throw 'Modr Plugin "'+pluginName+'" not available';
+                        if( typeof(mods[pluginName]) === 'undefined' ) {
+                            mods[pluginName] = {};
                         }
 
-                        // init plugin only once
-                        if( plugins[pluginName].initialized ) {
-                            continue;
-                        }
-
-                        // init wrapper with plugin modules
-                        wrappers[wrapper].init( pluginName, plugins[pluginName].modules );
-                        plugins[pluginName].initialized = true;
-
+                        mods[pluginName][moduleName] = modules[pluginName][moduleName];
                     }
-
                 }
             }
 
+            wrappers[wrapper].init( plugin, mods );
         }
 
-        function registerPlugin( config, mod ) {
-            if( typeof(plugins[config.plugin]) === 'undefined' ) {
-                plugins[config.plugin] = {
-                    modules: [],
-                    initialized: false
+        function registerModule( config, module ) {
+
+            var pluginName = config.plugin;
+            var moduleName = config.module;
+
+            if( typeof(modules[pluginName]) === 'undefined' ) {
+                modules[pluginName] = {};
+            }
+
+            if( !_isDefined(modules[pluginName][moduleName], 'Modr module "' + moduleName + '" (Plugin: "' + pluginName + '") already loaded') ) {
+                modules[pluginName][moduleName] = {
+                    config: config,
+                    module: module
                 };
             }
-
-            // set default wrapper for plugin
-            if( typeof(config.wrapper) !== 'undefined' ) {
-                plugins[config.plugin].wrapper = config.wrapper;
-            }
-
-            // push configuration and module
-            plugins[config.plugin].modules.push({
-                config: config,
-                module: mod
-            });
         }
 
         function registerWrapper( type, fn ) {
+
+            _isDefined( wrappers[type], 'Modr wrapper "' + type + '" already loaded');
+
+            // execute wrapper function
             wrappers[type] = fn();
+        }
+
+        function _isUndefined( variable, message ) {
+            if( typeof(variable) === 'undefined' ) {
+                throw message;
+            }
+            return false;
+        }
+
+        function _isDefined( variable, message ) {
+            if( typeof(variable) !== 'undefined' ) {
+                throw message;
+            }
+            return false;
         }
 
         // public modr functions
         return {
-            registerPlugin: registerPlugin,
+            registerModule: registerModule,
             registerWrapper: registerWrapper,
             init: init
         };
