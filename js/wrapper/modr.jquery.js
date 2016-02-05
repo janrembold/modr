@@ -1,4 +1,4 @@
-(function($, modr) {
+(function($, modr, undefined) {
     'use strict';
 
     if( typeof(modr) === 'undefined' ) {
@@ -91,10 +91,25 @@
             return scope;
         },
 
+        setDataOptions: function( options, overwrites ) {
+
+            var self = this;
+            if( !$.isArray(overwrites) ) {
+                overwrites = [ overwrites ];
+            }
+
+            for(var i=0, len=overwrites.length; i<len; i++) {
+                var option = self.$element.data( overwrites[i] );
+                if( option !== undefined ) {
+                    options[ overwrites[i] ] = option;
+                }
+            }
+        },
+
         destroy: function() {
 
             // TODO add global destroy function
-            //for(var i = 0, len = this.modules.length; i < len; ++i) {
+            //for(var i = 0, len = this.modules.length; i < len; i++) {
             //    this.modules[i].destroy();
             //}
 
