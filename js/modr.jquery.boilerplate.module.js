@@ -7,29 +7,20 @@
         module: 'moduleName',
         defaults: {
             defaultOption: 'someValue'
+        },
+        dependencies: {
+            pluginName: [ 'moduleName' ]
         }
     };
 
-    // the modules constructor
-    function Module( rootContext, options ) {
-
-        var self = this;
-
-        // save root context of jQuery boilerplate skeleton for later usage
-        self.root = rootContext;
-
-        // save modules options
-        self.options = options;
-
-        // optional, wait for global init event
-        self.root.wrapEvents('init.moduleName.pluginName', function() {
-            self.init();
-        });
-
-    }
-
     // the modules methods
-    var methods = {
+    modr.registerModule( config, {
+
+        /** prepare function is optional and gets automatically
+         *  executed after all modules were loaded by jQuery wrapper */
+        prepare: function() {
+            console.log('prepare module');
+        },
 
         init: function() {
             console.log('init module');
@@ -39,12 +30,6 @@
             console.log('destroy module');
         }
 
-    };
-
-    // extend plugins prototype
-    $.extend( Module.prototype, methods );
-
-    // register module in modr
-    modr.registerModule( config, Module );
+    });
 
 })(jQuery);
