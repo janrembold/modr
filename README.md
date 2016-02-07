@@ -54,9 +54,13 @@ In this case the jQuery boilerplate is only the root skeleton for the plugin its
  
 ## Usage 
 
+```html
+<!-- insert modr jquery wrapper script -->
+<script src="dist/wrapper/modr.jquery.min.js">
+```
+
 ``` js
-// init component directly with "init" option 
-// that executes given module directly after plugin creation 
+// init plugin to given element 
 $('.element').targetPluginName({
   pluginName: {
     module1: {
