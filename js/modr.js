@@ -9,6 +9,7 @@
      * Modr Singleton
      */
     var modr = function Modr() {
+
         var modules = {};
         var wrappers = {};
 
@@ -20,20 +21,40 @@
             for( var pluginName in config ) {
                 if (config.hasOwnProperty(pluginName)) {
 
-                    for( var i=0, len=config[pluginName].length; i<len; ++i ) {
+                    for( var i=0, len=config[pluginName].length; i<len; i++ ) {
 
                         var moduleName = config[pluginName][i];
-                        _isUndefined( modules[pluginName][moduleName], 'Modr module "' + moduleName + '" (Plugin: "' + pluginName + '") not loaded');
+                        var module = modules[pluginName][moduleName];
+                        _isUndefined( module , 'Modr module "' + pluginName + '->' + moduleName + '" not loaded');
 
                         if( typeof(mods[pluginName]) === 'undefined' ) {
                             mods[pluginName] = {};
                         }
 
+                        // check dependencies
+                        var dependencies = module.config.dependencies;
+                        if( typeof( dependencies ) !== 'undefined' ) {
+
+                            for( var depPluginName in dependencies ) {
+
+                                var depPlugin = dependencies[depPluginName];
+                                for(var j=0, depLen=depPlugin.length; j<depLen; j++) {
+
+                                    var depModuleName = depPlugin[j];
+                                    if( !config[depPluginName] || $.inArray(depModuleName, config[depPluginName]) === -1 ) {
+                                        throw 'Dependency "'+depPluginName + '->' + depModuleName+'" not configured for plugin "' + pluginName + '"';
+                                    }
+                                }
+                            }
+                        }
+
+                        // add module to module list
                         mods[pluginName][moduleName] = modules[pluginName][moduleName];
                     }
                 }
             }
 
+            // init all modules with given wrapper
             wrappers[wrapper].init( plugin, mods );
         }
 
@@ -46,7 +67,7 @@
                 modules[pluginName] = {};
             }
 
-            if( !_isDefined(modules[pluginName][moduleName], 'Modr module "' + moduleName + '" (Plugin: "' + pluginName + '") already loaded') ) {
+            if( !_isDefined(modules[pluginName][moduleName], 'Modr module "' + pluginName + '->' + moduleName + '" already loaded') ) {
                 modules[pluginName][moduleName] = {
                     config: config,
                     module: module
@@ -63,6 +84,7 @@
         }
 
         function _isUndefined( variable, message ) {
+
             if( typeof(variable) === 'undefined' ) {
                 throw message;
             }
@@ -70,6 +92,7 @@
         }
 
         function _isDefined( variable, message ) {
+
             if( typeof(variable) !== 'undefined' ) {
                 throw message;
             }
@@ -78,9 +101,11 @@
 
         // public modr functions
         return {
+
             registerModule: registerModule,
             registerWrapper: registerWrapper,
             init: init
+
         };
     };
 
