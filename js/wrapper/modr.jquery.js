@@ -12,23 +12,36 @@
     /**
      * Prepare jQuery Plugin Skeleton
      */
-    function Plugin(element, modules, options) {
+    function Plugin(element, modules, options, pluginName) {
+
+        var self = this;
 
         // modr modules
-        this.modules = {};
+        self.modules = {};
+
+        // set own plugin name
+        self.pluginName = pluginName;
+
+        // set global options
+        self.options = options;
 
         // the target elements jQuery object
-        this.$element = $(element);
+        self.$element = $(element);
 
         // init plugins
-        this._loadModules( modules, options );
+        self._loadModules( modules, options );
+
+        // execute optional prepare functions
+        self._prepare();
+
+        // check init declaration in options to call init() immediately
+        self._autoInit();
     }
 
     var methods = {
         _loadModules: function( modules, options ) {
 
-            // extend all default module options
-            this.options = {};
+            var self = this;
 
             // instantiate all modules
             for( var pluginName in modules ) {
@@ -37,71 +50,56 @@
                     var mod = modules[pluginName][moduleName];
                     var defaults = mod.config.defaults || {};
 
+                    // extend default options with custom options set with plugin init
                     if( options[pluginName] && options[pluginName][moduleName] ) {
                         $.extend(true, defaults, options[pluginName][moduleName]);
                     }
 
-                    if( typeof(this.modules[pluginName]) === 'undefined' ) {
-                        this.modules[pluginName] = {};
-                        this.options[pluginName] = {};
-                    }
+                    // create new module skeleton
+                    var Skeleton = function( rootContext, options ) {
 
-                    if( typeof(this.options[pluginName][moduleName]) === 'undefined' ) {
-                        this.options[pluginName][moduleName] = {};
-                    }
+                        var self = this;
+                        self.root = rootContext;
+                        self.$element = self.root.$element;
+                        self.options = options;
+                    };
 
-                    $.extend(true, this.options[pluginName][moduleName], defaults);
+                    // extend default skelton with module functions
+                    $.extend( Skeleton.prototype, mod.module);
 
-                    this.modules[pluginName][moduleName] = new mod.module( this, defaults );
+                    // init module
+                    self.modules[pluginName] = self.modules[pluginName] || {};
+                    self.modules[pluginName][moduleName] = new Skeleton( self, defaults );
                 }
             }
-
-            $.extend(true, this.options, options);
-
         },
 
-        /**
-         * Wrap events around a given function and listen to preventDefaults
-         *
-         * @param eventName - will be prefixed with "before." and "after."
-         * @param fn - the function to call between the events
-         * @param elem - optional, the jQuery element to bind the event to, defaults to this.$element
-         * @param thisArg - optional, the thisArg for fn.apply, defaults to root module
-         * @param params - optional, array of parameters. Will be set to both events and the given function
-         * @returns {*|methods} the given scope
-         */
-        wrapEvents: function( eventName, fn, elem, thisArg, params ) {
-
-            var scope = thisArg || this;
-            var element = elem || this.$element;
-            var event = $.Event( 'before.'+eventName );
-
-            // trigger event before function is executed
-            element.trigger( event, params );
-            if ( event.isDefaultPrevented() ) {
-                return;
-            }
-
-            // call wrapped function
-            fn.apply(scope, params);
-
-            // trigger event after function was executed
-            element.trigger( 'after.'+eventName, params );
-
-            return scope;
-        },
-
-        setDataOptions: function( options, overwrites ) {
+        _prepare: function() {
 
             var self = this;
-            if( !$.isArray(overwrites) ) {
-                overwrites = [ overwrites ];
-            }
 
-            for(var i=0, len=overwrites.length; i<len; i++) {
-                var option = self.$element.data( overwrites[i] );
-                if( option !== undefined ) {
-                    options[ overwrites[i] ] = option;
+            for( var pluginName in self.modules ) {
+
+                var plugin = self.modules[pluginName];
+                for ( var moduleName in plugin ) {
+
+                    if( $.isFunction( plugin[moduleName].prepare ) ) {
+                        plugin[moduleName].prepare();
+                    }
+                }
+            }
+        },
+
+        _autoInit: function() {
+
+            var self = this;
+
+            if( $.isPlainObject( self.options.init ) && Object.keys( self.options.init ).length === 1 ) {
+                var pluginName = Object.keys(self.options.init)[0];
+                var moduleName = self.options.init[pluginName];
+
+                if( self.modules[pluginName] && self.modules[pluginName][moduleName] ) {
+                    self.modules[pluginName][moduleName].init();
                 }
             }
         },
@@ -112,7 +110,6 @@
             //for(var i = 0, len = this.modules.length; i < len; i++) {
             //    this.modules[i].destroy();
             //}
-
         }
     };
 
@@ -129,7 +126,7 @@
                 $.fn[pluginName] = function(options) {
                     this.each(function() {
                         if(!$.data(this, pluginName)) {
-                            $.data(this, pluginName, new Plugin(this, modules, options));
+                            $.data(this, pluginName, new Plugin(this, modules, options, pluginName));
 
                             // trigger ready event on element
                             $(this).trigger('ready.'+pluginName);
