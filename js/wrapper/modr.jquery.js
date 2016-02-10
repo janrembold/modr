@@ -48,7 +48,7 @@
                 for ( var moduleName in modules[pluginName] ) {
 
                     var mod = modules[pluginName][moduleName];
-                    var defaults = mod.config.defaults || {};
+                    var defaults = $.extend(true, {}, mod.config.defaults);
 
                     // extend default options with custom options set with plugin init
                     if( options[pluginName] && options[pluginName][moduleName] ) {
