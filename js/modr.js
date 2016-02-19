@@ -41,7 +41,7 @@
                                 for(var j=0, depLen=depPlugin.length; j<depLen; j++) {
 
                                     var depModuleName = depPlugin[j];
-                                    if( !config[depPluginName] || $.inArray(depModuleName, config[depPluginName]) === -1 ) {
+                                    if( !config[depPluginName] || config[depPluginName].indexOf(depModuleName) === -1 ) {
                                         throw 'Dependency "'+depPluginName + '->' + depModuleName+'" not configured for plugin "' + pluginName + '"';
                                     }
                                 }
